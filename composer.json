@@ -1,8 +1,9 @@
 {
     "name": "leo1992/tools",
     "type": "library",
-    "description": "私人的代码仓库",
-    "keywords": ["library"],
+    "require": {
+        "phpoffice/phpexcel": "^1.8"
+    },
     "license": "MIT",
     "authors": [
         {
@@ -10,14 +11,5 @@
             "email": "467195537@qq.com"
         }
     ],
-    "require": {
-        "phpmailer/phpmailer": "^5.2",
-        "phpoffice/phpexcel": "^1.8"
-    },
-    "repositories": {
-        "packagist": {
-            "type": "composer",
-            "url": "https://packagist.phpcomposer.com"
-        }
-    }
+    "minimum-stability": "dev"
 }
