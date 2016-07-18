@@ -1,9 +1,16 @@
 {
+    "name": "leo/tools",
+    "type": "library",
+    "description": "私人的代码仓库",
+    "keywords": ["library"],
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "leo",
+            "email": "467195537@qq.com"
+        }
+    ],
     "require": {
-        "qiniu/php-sdk": "^7.0",
-        "jaeger/querylist": "^3.1",
-        "jaeger/querylist-ext-request": "^1.0",
-        "jaeger/querylist-ext-login": "^1.0",
         "phpmailer/phpmailer": "^5.2",
         "phpoffice/phpexcel": "^1.8"
     },
