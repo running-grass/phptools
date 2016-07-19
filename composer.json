@@ -12,15 +12,13 @@
         }
     ],
     "minimum-stability": "dev",
-    "autoload":{
-        "psr-4":{
-            "leo\\":""
-        }
-    },
     "repositories": {
         "packagist": {
             "type": "composer",
             "url": "https://packagist.phpcomposer.com"
         }
+    },
+    "autoload":{
+        "files": ["function_net.php"]
     }
 }

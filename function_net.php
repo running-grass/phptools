@@ -1,5 +1,5 @@
 <?php
-namespace leo;
+// namespace Leo;
 /*
  *curl请求
  *
@@ -34,4 +34,3 @@ function curl_get($url)
     curl_close($ch);
     return $response;
 }
-
