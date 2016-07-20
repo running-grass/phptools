@@ -19,6 +19,9 @@
         }
     },
     "autoload":{
-        "files": ["function_net.php"]
+        "psr-4" : {
+            "Leo\\" : "src/class"
+        },
+        "files": ["src/function/net.php"]
     }
 }
