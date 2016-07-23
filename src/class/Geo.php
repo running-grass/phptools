@@ -480,7 +480,7 @@ class Geo
         return pow(2, (18 - $zoom));
     }
  
-    private function  mercatorToLngLat ($mLngLat) {
+    public function  mercatorToLngLat ($mLngLat) {
         $absLngLat;
         $mc;
         $absLngLat = [
@@ -488,7 +488,7 @@ class Geo
             'lat' => abs($mLngLat['lat'])
         ];
         for ($i = 0; $i < count($this->MCBAND); $i++) {
-            if ($absLngLat['lat'] >= $this->MCBAND[i]) {
+            if ($absLngLat['lat'] >= $this->MCBAND[$i]) {
                 $mc = $this->MC2LL[$i];
                 break;
             }
