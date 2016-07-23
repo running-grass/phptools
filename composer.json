@@ -2,7 +2,7 @@
     "name": "leo1992/tools",
     "type": "library",
     "require": {
-        "phpoffice/phpexcel": "^1.8"
+        "phpoffice/phpexcel": "1.8"
     },
     "license": "MIT",
     "authors": [
