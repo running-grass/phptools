@@ -10,6 +10,30 @@ namespace Leo;
 class Net
 {
     /*
+     * 解析url中的参数
+     *
+     * @author leo<leo19920823@gmail.com>
+     * @params $url string url字符串
+     *
+     * @return $params array 参数名和参数值组成的关联数组
+     */
+    static function parse_url_params($url)
+    {
+        try {
+            $query = parse_url($url)['fragment'];
+            $queryParts = explode('&', $query);
+            $params = array();
+            foreach ($queryParts as $param) {
+                $item = explode('=', $param);
+                $params[$item[0]] = $item[1];
+            }
+            return $params;
+        } catch (\Exception $e) {
+            throw $e;
+        }
+    }
+
+    /*
      *curl请求
      *
      */
