@@ -1,6 +1,9 @@
 <?php
 namespace Leo;
 
+use \Leo\Net;
+use \Leo\File;
+
 /**
  * 地理位置相关类
  * User: leo
@@ -9,6 +12,8 @@ namespace Leo;
  */
 class Geo
 {
+    const BOROUGH_BAIDU_CATE = [25, 238];
+    const OFFICE_BAIDU_CATE = [24, 236];
     // 高德的类型对应关系
     private $_gaode_catelog_mapping = [
         10102 => '加油站',
@@ -103,7 +108,55 @@ class Geo
         }
     }
 
+    // 获取百度地图中的区域范围
+    public function get_baidu_area($word, $city_name = '北京市', $categorys)
+    {
+        try {
+            // 获取坐标的接口
+            $city_id = $this->_get_baidu_city_id($city_name);
+            $uid = $this->getBaiduUid($word, $city_name, $categorys);
+            $url = "http://map.baidu.com/?qt=ext&uid={$uid}&c={$city_id}&ext_ver=new&ie=utf-8&l=17";
 
+            $str_res = Net::curl_get($url);
+
+            $arr_res = json_decode($str_res, true);
+            if (empty($arr_res['content']['geo'])) {
+                throw new \Exception("【{$word}】查询结果为空");
+            }
+
+            $str_geo = $arr_res['content']['geo'];
+
+            $arr_geo = explode('|1-',$str_geo);
+            $arr1_1 = explode('|', $arr_geo[0]);
+            $arr1 = explode(';', $arr1_1[1]);
+            list($general[0]['lng'],$general[0]['lat']) = explode(',', $arr1[0]);
+            list($general[1]['lng'],$general[1]['lat']) = explode(',', $arr1[1]);
+
+            $arr_geo[1] = str_replace(';','',$arr_geo[1]);
+            $arr2 = explode(',', $arr_geo[1]);
+            $arr2s = array_chunk($arr2, 2);
+            $drawing = [];
+            foreach ($arr2s as $v) {
+                $pos['lng'] = $v[0];
+                $pos['lat'] = $v[1];
+                $drawing[] = $this->mercatorToLngLat($pos);
+            }
+
+            $general[0] = $this->mercatorToLngLat($general[0]);
+            $general[1] = $this->mercatorToLngLat($general[1]);
+
+            $map_area = [
+                'general' => $general,
+                'drawing' => $drawing
+            ];
+
+            return $map_area;
+        } catch (\Exception $e) {
+            throw $e;
+        }
+    }
+
+    // 多渠道获取坐标
     public function getGeo($word, $city_name, $categorys = [])
     {
         try {
@@ -131,7 +184,7 @@ class Geo
             $mercator = $this->lngLatToMercator($geo);
             $url = "http://api.map.baidu.com/?qt=rgc&x={$mercator['lng']}&y={$mercator['lat']}";
 
-            $str_res = curl_get($url);
+            $str_res = Net::curl_get($url);
             $arr_res = json_decode($str_res, true);
 
             $addr = $arr_res['content']['address'];
@@ -142,7 +195,7 @@ class Geo
     }
 
     // 获取地址
-    public function getAddr($word, $city_name, $categorys = [])
+    public function getAddr($word, $city_name, $categorys = [25, 238])
     {
         try {
 
@@ -161,16 +214,12 @@ class Geo
         }
     }
 
-    public function getBaiduAddr($word, $city_name, $categorys = [25])
+    // 获取百度的地址
+    public function getBaiduAddr($word, $city_name, $categorys = [25, 238])
     {
         try {
-            $url_word = urlencode($word);
-            $city_id = $this->_get_baidu_city_id($city_name);
-            $url = "http://map.baidu.com/?qt=s&wd={$url_word}&c={$city_id}";
+            $arr_res = $this->getContentByBaiduApi($word, $city_name);
             $addr = '';
-
-            $str_res = curl_get($url);
-            $arr_res = json_decode($str_res, true);
 
             $list = $arr_res['content'];
 
@@ -222,16 +271,54 @@ class Geo
                 }
             }
 
-            if (empty($addr)) {
-                foreach ($list as $v) {
-                    $addr = $v['addr'];
-                    if (empty($addr)) {
+            return $addr;
+        } catch (\Exception $e) {
+            throw $e;
+        }
+    }
+
+    // 获取百度的uid
+    public function getBaiduUid($word, $city_name, $categorys)
+    {
+        try {
+            $arr_res = $this->getContentByBaiduApi($word, $city_name);
+            $uid = '';
+            if ($word == $arr_res['content'][0]['name']) {
+                $uid = $arr_res['content'][0]['uid'];
+            }
+
+            if (empty($uid)) {
+                foreach ($arr_res['content'] as $v) {
+                    if (in_array($v['catalogID'],$categorys)) {
+                        $uid = $v['uid'];
                         break;
                     }
                 }
             }
 
-            return $addr;
+            if (empty($uid)) {
+                throw new \Exception("【{$word}】:无匹配的百度uid");
+            } else {
+                return $uid;
+            }
+        } catch (\Exception $e) {
+            throw $e;
+        }
+    }
+
+    // 调取百度的接口获取相关数据
+    public function getContentByBaiduApi($word, $city_name)
+    {
+        try {
+            $url_word = urlencode($word);
+            $city_id = $this->_get_baidu_city_id($city_name);
+            $url = "http://map.baidu.com/?qt=s&wd={$url_word}&c={$city_id}";
+            $addr = '';
+
+            $str_res = Net::curl_get($url);
+            $arr_res = json_decode($str_res, true);
+
+            return $arr_res;
         } catch (\Exception $e) {
             throw $e;
         }
