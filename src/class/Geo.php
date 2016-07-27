@@ -157,16 +157,12 @@ class Geo
     }
 
     // 多渠道获取坐标
-    public function getGeo($word, $city_name, $categorys = [])
+    public function getGaodeGeo($word, $city_name, $categorys = [])
     {
         try {
-            try {
-                $list = $this->_getGaodeList($word);
-                $geo = $this->_getGaodeMatchGeo($list, $this->_gaode_arr_borough);
-                $geo = $this->_convertCoord($geo);
-            } catch (\Exception $e) {
-                $geo = $this->getBaiduGeo($word, '北京');
-            }
+            $list = $this->_getGaodeList($word, $city_name);
+            $geo = $this->_getGaodeMatchGeo($list, $this->_gaode_arr_borough);
+            $geo = $this->_convertCoord($geo);
             return $geo;
         } catch (\Exception $e) {
             throw $e;
@@ -195,22 +191,15 @@ class Geo
     }
 
     // 获取地址
-    public function getAddr($word, $city_name, $categorys = [25, 238])
+    public function getGaodeAddr($word, $city_name, $categorys = [25, 238])
     {
         try {
 
-            $list = $this->_getGaodeList($word, $city_name);
-            $address = $this->_getGaodeMatchAddr($list, $categorys);
-
-            if (empty($address)) {
-                $address = $this->getBaiduAddr($word, $city_name);
-            }
-
+                $list = $this->_getGaodeList($word, $city_name);
+                $address = $this->_getGaodeMatchAddr($list, $categorys);
             return $address;
         } catch (\Exception $e) {
-            $address = $this->getBaiduAddr($word, $city_name);
-            return $address;
-            // throw $e;
+            throw $e;
         }
     }
 
@@ -393,7 +382,7 @@ class Geo
     }
 
     // 截取百度的一个api
-    public function getBaiduGeo2($word, $city, $categorys = [25])
+    public function getBaiduGeo2($word, $city, $categorys)
     {
         try {
             $city_id = $this->_get_baidu_city_id($city);
@@ -403,7 +392,7 @@ class Geo
             // 请求接口内容
             $url = "http://map.baidu.com/?qt=s&wd={$url_word}&c={$city_id}";
 
-            $arr_res = json_decode(curl_get($url), true);
+            $arr_res = json_decode(Net::curl_get($url), true);
 
             $list = $arr_res['content'];
 
@@ -470,7 +459,8 @@ class Geo
             // 请求接口内容
             $url = "http://api.map.baidu.com/geocoder/v2/?ak=aqLgbABLabxT9csGOEhrjDFM&output=json&address={$word}&city={$city}";
 
-            $res = json_decode(curl_get($url), true);
+            $res = json_decode(Net::curl_get($url), true);
+
 
             if (0 != $res['status']) {
                 throw new \Exception('查询百度经纬度接口失败');

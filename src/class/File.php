@@ -10,7 +10,7 @@ namespace Leo;
 class File
 {
     // 从excel读取数据
-    public function readFromExcel($filename, $hasRowName = false)
+    public static function readFromExcel($filename, $hasRowName = false)
     {
 
         if (!file_exists($filename)) {
@@ -59,7 +59,7 @@ class File
      *
      * @return 直接输出到浏览器
      */
-    function writeToExcel($data , $filename = 'sheets')
+    public static function writeToExcel($data , $filename = 'sheets')
     {
         $objPHPExcel = new \PHPExcel();
         // Set document properties
