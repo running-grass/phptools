@@ -1,6 +1,7 @@
 <?php
 namespace Leo\Figure;
 
+use \Leo\Base;
 use \Leo\Figure\Point;
 
 // 异常
@@ -8,11 +9,12 @@ use \Leo\Figure\Exception\LineOverlapException;
 use \Leo\Figure\Exception\TwoPointOverlapException;
 
 // 线段类
-class Line
+class Line extends Base
 {
     private $p1;
     private $p2;
     private $tilt;
+    private $length;
 
     public function __construct(Point $p1, Point $p2)
     {
@@ -22,6 +24,19 @@ class Line
             }
             $this->setP1($p1);
             $this->setP2($p2);
+            unset($p1);
+            unset($p2);
+        } catch (\Exception $e) {
+            throw $e;
+        }
+    }
+    private function generateLength()
+    {
+        try {
+            $length = sqrt(pow(abs($this->getP1()->getX() - $this->getP2()->getX()), 2) +
+                           pow(abs($this->getP1()->getY() - $this->getP2->getY()), 2));
+            $this->setLength($length);
+            unset($length);
         } catch (\Exception $e) {
             throw $e;
         }
@@ -130,4 +145,33 @@ class Line
         }
     }
 
+    // setting and  getting
+    private function setLength($length)
+    {
+        try {
+            $this->length = $length;
+        } catch (\Exception $e) {
+            throw $e;
+        }
+    }
+    public function getLength()
+    {
+        try {
+            if (empty($this->length)) {
+                $this->generateLength();
+            }
+            return $this->length;
+        } catch (\Exception $e) {
+            throw $e;
+        }
+    }
+
+    public function __toString()
+    {
+        try {
+            return '[' . (string)$this->getP1() . '->' . (string)$this->getP2() . ']';
+        } catch (\Exception $e) {
+            throw $e;
+        }
+    }
 }

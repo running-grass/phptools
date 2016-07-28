@@ -1,6 +1,7 @@
 <?php
 namespace Leo\Figure;
 
+use \Leo\Base;
 use \Leo\Figure\Point;
 use \Leo\Figure\Line;
 use \Leo\Figure\Angle;
@@ -12,12 +13,12 @@ use \Leo\Figure\Exception\LineOverlapException;
 use \Leo\Figure\Exception\TwoPointOverlapException;
 
 // 多边形类
-class Polygon
+class Polygon extends Base
 {
-    protected $points;
-    protected $lines;
-    protected $angles;
-    protected $number;
+    private $points;
+    private $lines;
+    private $angles;
+    private $number;
 
     public function __construct(array $arr_point)
     {

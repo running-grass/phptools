@@ -12,9 +12,9 @@ use \Leo\Figure\Exception\LineOverlapException;
 // 矩形类
 class Triangle extends ConvexPolygon
 {
-    protected $p1;
-    protected $p2;
-    protected $p3;
+    private $p1;
+    private $p2;
+    private $p3;
 
     public function __construct(Point $p1, Point $p2, Point $p3)
     {

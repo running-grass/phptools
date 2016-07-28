@@ -20,7 +20,10 @@
     },
     "autoload":{
         "psr-4" : {
-            "Leo\\" : "src/class"
+            "Leo\\" : "src/class/Leo"
         }
+    },
+    "require-dev": {
+        "phpunit/phpunit": "^5.4"
     }
 }

@@ -1,8 +1,10 @@
 <?php
 namespace Leo\Figure;
 
+use \Leo\Base;
+
 // 点类
-class Point
+class Point extends Base
 {
     private $x;
     private $y;
@@ -53,12 +55,13 @@ class Point
         }
     }
 
-    public function __string()
+    public function __toString()
     {
         try {
-            return "{$this->x},{$this->y}";
+            return "({$this->getX()},{$this->getY()})";
         } catch (\Exception $e) {
             throw $e;
         }
     }
+
 }

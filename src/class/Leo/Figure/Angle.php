@@ -1,6 +1,7 @@
 <?php
 namespace Leo\Figure;
 
+use \Leo\Base;
 use \Leo\Figure\Point;
 use \Leo\Figure\Line;
 
@@ -8,11 +9,11 @@ use \Leo\Figure\Line;
 use \Leo\Figure\Exception\LineOverlapException;
 
 // 角度类
-class Angle
+class Angle extends Base
 {
-    protected $l1;
-    protected $l2;
-    protected $angle;
+    private $l1;
+    private $l2;
+    private $angle;
 
     public function __construct(Line $l1, Line $l2)
     {
@@ -116,4 +117,14 @@ class Angle
             throw $e;
         }
     }
+
+    public function __toString()
+    {
+        try {
+            return '{' . (string)$this->getL1() . '=>' . (string)$this->getL2() . '}';
+        } catch (\Exception $e) {
+            throw $e;
+        }
+    }
+
 }
