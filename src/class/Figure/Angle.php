@@ -34,7 +34,7 @@ class Angle
     private function generateAngle()
     {
         try {
-            $angle =  $this->getL1()->getTilt() - $this->getL2()->getTilt() -180;
+            $angle =  $this->getL1()->getTilt() - $this->getL2()->getTilt() + 180;
             $angle = fmod(($angle + 360),360);
             $this->setAngle($angle);
         } catch (\Exception $e) {

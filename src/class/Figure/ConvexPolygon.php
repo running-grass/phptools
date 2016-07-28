@@ -32,6 +32,13 @@ class ConvexPolygon extends Polygon
                     $is = true;
                     break;
                 }
+
+                // // dump("判断凸多边形".(int)$is);
+                // $as  = $tri->getAngles();
+                // foreach ($as as $a) {
+                //     dump($a->getAngle());
+                // }
+
             }
             return $is;
         } catch (\Exception $e) {

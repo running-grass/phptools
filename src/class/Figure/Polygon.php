@@ -31,6 +31,7 @@ class Polygon
     public function inPolygon(Point $p)
     {
         try {
+            // dump($this);
             // 首先判断是否在几何图形的边框上
             $is = false;
             foreach ($this->getLines() as $l) {
@@ -52,6 +53,12 @@ class Polygon
             $as = $this->getAngles();
             $ls = $this->getLines();
 
+            // foreach ($ls as $a) {
+            //     dump("{$a->getP1()->getX()},{$a->getP1()->getY()}");
+            //     dump("{$a->getP2()->getX()},{$a->getP2()->getY()}");
+            //     dump($a->getTilt());
+            // }
+            // die;
 
 
             $arr_tri_concave = [];
@@ -60,22 +67,20 @@ class Polygon
             $new_pol;
 
             $as1 = $as;
-            $c_as1 = count($as1);
-            $as1[-1] = $as1[$c_as1 -1];
             $ls1 = $ls;
-            $c_ls = count($ls1);
-            $ls1[-1] = $ls1[$c_ls -1];
 
             // 把凹多边形变为凸多边形，并且形成一个缺失三角形集合
             while(1) {
-                $c_as1 = count($as1);
-                $as1[-1] = $as1[$c_as1 -1];
                 $c_ls = count($ls1);
+                $ls1[] = $ls1[0];
                 $ls1[-1] = $ls1[$c_ls -1];
                 if (false !== $i = $this->checkConcave($as1)) {
-                    $arr_tri_concave[] = new Triangle($ls[$i]->getP1(), $ls[$i-1]->getP1(), $ls[$i+1]->getP1());
+                    $arr_tri_concave[] = new Triangle($ls1[$i-1]->getP1(),
+                                                      $ls1[$i+1]->getP1(),
+                                                      $ls1[$i]->getP1());
 
                     unset($ls1[$i]);
+                    unset($ls1[$c_ls]);
                     unset($ls1[-1]);
                     $arr_point = [];
                     foreach ($ls1 as $v) {
@@ -87,6 +92,7 @@ class Polygon
                     $ls1 = $new_pol->getLines();
                 } else {
                     unset($ls1[-1]);
+                    unset($ls1[$c_ls]);
                     $arr_point = [];
                     foreach ($ls1 as $v) {
                         $arr_point[] = $v->getP1();
@@ -100,6 +106,8 @@ class Polygon
             unset($ls1);
             unset($as);
             unset($ls);
+
+            // dump($convex->getTriangles());
 
             $is = true;
             if ($convex->inConvexPolygon($p)) {
@@ -122,9 +130,7 @@ class Polygon
     private function checkConcave($angles)
     {
         try {
-            $c = count($angles) -1;
-            for ($i = 0; $i < $c; $i++) {
-
+            for ($i = 0; $i < count($angles); $i++) {
                 if (180 < $angles[$i]->getAngle()) {
                     return $i;
                 }

@@ -19,18 +19,6 @@ class Triangle extends ConvexPolygon
     public function __construct(Point $p1, Point $p2, Point $p3)
     {
         try {
-            // 反转x坐标
-            if ($p1->getX() > $p2->getX()) {
-                $x = $p1->getX();
-                $p1->setX($p2->getX());
-                $p2->setX($x);
-            }
-            // 反转y坐标
-            if ($p1->getY() > $p2->getY()) {
-                $y = $p1->getY();
-                $p1->setY($p2->getY());
-                $p2->setY($y);
-            }
             $this->setP1($p1);
             $this->setP2($p2);
             $this->setP3($p3);
@@ -64,6 +52,10 @@ class Triangle extends ConvexPolygon
             $a2 = (new Angle($l2, $ls[1]))->getAngle();
             $a3 = (new Angle($l3, $ls[2]))->getAngle();
 
+            // $t = new Angle($l3, $ls[2]);
+            // dump($t);
+            // dump($t->getAngle());
+
             $l1 = new Line($p1, $p);
             $l2 = new Line($p2, $p);
             $l3 = new Line($p3, $p);
@@ -72,8 +64,21 @@ class Triangle extends ConvexPolygon
             $b2 = (new Angle($ls[0], $l2))->getAngle();
             $b3 = (new Angle($ls[1], $l3))->getAngle();
 
+
+            // $as  = $tri->getAngles();
+            // foreach ($as as $a) {
+            //     dump($a->getAngle());
+            // }
+
+            // dump($this);
+            // dump("$a1/ $a2/ $a3/ $b1/ $b2/ $b3");
+            // die;
+
+            $c = $a1 + $a2 + $a3 + $b1 + $b2 + $b3;
+
+
             $is = false;
-            if (180 == ($a1 + $a2 + $a3 + $b1 + $b2 + $b3)) {
+            if (180 >= (int)$c) {
                 $is = true;
             } else {
                 $is = false;
