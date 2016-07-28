@@ -7,11 +7,21 @@ class Point
     private $x;
     private $y;
 
-    // setting and  getting
-    public function setX($x)
+    public function __construct($x, $y)
     {
         try {
-            $this->x = (float)$x;
+            $this->setX($x);
+            $this->setY($y);
+        } catch (\Exception $e) {
+            throw $e;
+        }
+    }
+
+    // setting and  getting
+    private function setX($x)
+    {
+        try {
+            $this->x = (double)$x;
         } catch (\Exception $e) {
             throw $e;
         }
@@ -26,10 +36,10 @@ class Point
     }
 
     // setting and  getting
-    public function setY($y)
+    private function setY($y)
     {
         try {
-            $this->y = (float)$y;
+            $this->y = (double)$y;
         } catch (\Exception $e) {
             throw $e;
         }
