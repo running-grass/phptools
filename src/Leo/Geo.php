@@ -61,12 +61,32 @@ class Geo
 
     private $_city_mapping = [
         '北京市' => [
-            'gaode_id' => 110000,
+            'gaode_id' => 110100,
             'baidu_id' => 131,
         ],
         '广州市' => [
             'gaode_id' => 440100,
             'baidu_id' => 257,
+        ],
+        '深圳市' => [
+            'gaode_id' => 440300,
+            'baidu_id' => 340,
+        ],
+        '成都市' => [
+            'gaode_id' => 510100,
+            'baidu_id' => 75,
+        ],
+        '天津市' => [
+            'gaode_id' => 120100,
+            'baidu_id' => 332,
+        ],
+        '南京市' => [
+            'gaode_id' => 320100,
+            'baidu_id' => 315
+        ],
+        '上海市' => [
+            'gaode_id' => 310100,
+            'baidu_id' => 289
         ]
     ];
 
