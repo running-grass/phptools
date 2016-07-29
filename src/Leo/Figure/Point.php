@@ -6,14 +6,17 @@ use \Leo\Base;
 // 点类
 class Point extends Base
 {
-    private $x;
-    private $y;
+    private $x; // x坐标
+    private $y; // y 坐标
 
     public function __construct($x, $y)
     {
         try {
             $this->setX($x);
             $this->setY($y);
+
+            unset($x, $y);
+            return 0;
         } catch (\Exception $e) {
             throw $e;
         }
@@ -23,7 +26,10 @@ class Point extends Base
     private function setX($x)
     {
         try {
-            $this->x = (double)$x;
+            $this->x = (float)$x;
+
+            unset($x);
+            return 0;
         } catch (\Exception $e) {
             throw $e;
         }
@@ -41,7 +47,10 @@ class Point extends Base
     private function setY($y)
     {
         try {
-            $this->y = (double)$y;
+            $this->y = (float)$y;
+
+            unset($y);
+            return 0;
         } catch (\Exception $e) {
             throw $e;
         }

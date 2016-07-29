@@ -20,7 +20,7 @@
     },
     "autoload":{
         "psr-4" : {
-            "Leo\\" : "src/class/Leo"
+            "Leo\\" : "src/Leo"
         }
     },
     "require-dev": {

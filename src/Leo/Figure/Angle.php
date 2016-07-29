@@ -27,6 +27,7 @@ class Angle extends Base
             // }
             $this->setL1($l1);
             $this->setL2($l2);
+            return 0;
         } catch (\Exception $e) {
             throw $e;
         }
@@ -38,6 +39,7 @@ class Angle extends Base
             $angle =  $this->getL1()->getTilt() - $this->getL2()->getTilt() + 180;
             $angle = fmod(($angle + 360),360);
             $this->setAngle($angle);
+            return 0;
         } catch (\Exception $e) {
             throw $e;
         }
@@ -48,6 +50,7 @@ class Angle extends Base
     {
         try {
             $this->l1 = $l1;
+            return 0;
         } catch (\Exception $e) {
             throw $e;
         }
@@ -66,6 +69,7 @@ class Angle extends Base
     {
         try {
             $this->p = $p;
+            return 0;
         } catch (\Exception $e) {
             throw $e;
         }
@@ -84,6 +88,7 @@ class Angle extends Base
     {
         try {
             $this->l2 = $l2;
+            return 0;
         } catch (\Exception $e) {
             throw $e;
         }

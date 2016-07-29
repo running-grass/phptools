@@ -17,4 +17,8 @@ $l1 = new Line($p1, $p11);
 
 $a = new Angle($l, $l1);
 
-echo "$a\n";
+$arr1  = [1,2,3];
+$arr2 = [4,5,6];
+var_dump(array_map(null, $arr1,$arr2));
+
+// echo "$a\n";
