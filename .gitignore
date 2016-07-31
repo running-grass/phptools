@@ -1,2 +1,12 @@
+# GTAGS的文件
+/GRTAGS
+/GSYMS
+/GTAGS
+/GPATH
+
+# Composer
 /vendor
 /composer.lock
+
+# PhpStom的工程文件
+/.idea
