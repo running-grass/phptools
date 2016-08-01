@@ -100,6 +100,10 @@ class File
                         $col_nanme = $currentSheet->getCellByColumnAndRow(ord($currentColumn) - 65,1)->getValue();
                         /**ord()将字符转为十进制数*/
                         $temp[$col_nanme] = $currentSheet->getCellByColumnAndRow(ord($currentColumn) - 65,$currentRow)->getValue();
+                        // 如果是富文本，则转换成无格式的
+                        if ('PHPExcel_RichText' == get_class($temp[$col_nanme])) {
+                            $temp[$col_nanme] = $temp[$col_nanme]->getPlainText();
+                        }
                         /**如果输出汉字有乱码，则需将输出内容用iconv函数进行编码转换，如下将gb2312编码转为utf-8编码输出*/
                         // echo iconv('utf-8','gb2312', $val)."\t";
                     }
