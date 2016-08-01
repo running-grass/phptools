@@ -39,7 +39,11 @@ class Arr
             foreach ($arr1 as $k => $v) {
                 // 如果是索引数组的话，是追加合并, 否则是补充合并
                 if ('integer'  == getType($k)) {
-                    return self::array_vm($arr, $arr1);
+                    if (is_array($v)) {
+                        return self::array_vm($arr, $arr1);
+                    } else {
+                        return self::array_vum($arr, $arr1);
+                    }
                 } else {
                     if (isset($arr[$k])) {
                         if (is_array($v)) {
