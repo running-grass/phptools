@@ -20,7 +20,18 @@ class Net
     static function parse_url_params($url)
     {
         try {
-            $query = parse_url($url)['fragment'];
+            $parse = parse_url($url);
+            $query = '';
+            if (isset($parse['query'])) {
+                $query .= $parse['query'];
+            }
+            if (isset($parse['fragment'])) {
+                if (empty($query)) {
+                    $query = $parse['fragment'];
+                } else {
+                    $query .= '&' . $parse['fragment'];
+                }
+            }
             $queryParts = explode('&', $query);
             $params = array();
             foreach ($queryParts as $param) {
