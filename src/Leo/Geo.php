@@ -322,12 +322,41 @@ class Geo
             $url_word = urlencode($word);
             $city_id = $this->_get_baidu_city_id($city_name);
             $url = "http://map.baidu.com/?qt=s&wd={$url_word}&c={$city_id}";
-            $addr = '';
 
             $str_res = Net::curl_get($url);
             $arr_res = json_decode($str_res, true);
 
             return $arr_res;
+        } catch (\Exception $e) {
+            throw $e;
+        }
+    }
+
+    public function getBaiduSubways($city_name)
+    {
+        try {
+            $city_id = $this->_get_baidu_city_id($city_name);
+            $url = "http://map.baidu.com/?qt=bsi&c={$city_id}";
+
+            $str_res = Net::curl_get($url);
+            $arr_res = json_decode($str_res, true);
+
+            $arr_res = $arr_res['content'];
+            $arr = [];
+            foreach ($arr_res as $res) {
+                $line_name = $res['line_name'];
+                $line_name = explode('(', $line_name)[0];
+                foreach ($res['stops'] as $stop) {
+                    $geo = [
+                        'lng' => $stop['x'],
+                        'lat' => $stop['y']
+                    ];
+                    $geo = $this->mercatorToLngLat($geo);
+
+                    $arr[$line_name][$stop['name']] = $geo;
+                }
+            }
+            return $arr;
         } catch (\Exception $e) {
             throw $e;
         }
