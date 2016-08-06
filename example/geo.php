@@ -2,9 +2,19 @@
 require_once __DIR__ . '/../autoload.php';
 
 use \Leo\Geo;
-$lib_geo = new Geo();
 
-$a = $lib_geo->getBaiduBusStops('通44', '北京市');
+try {
+    $lib_geo = new Geo();
 
-$l = $lib_geo->getDistance($a['stops'][0]['loc'], $a['stops'][13]['loc']);
-var_dump($l);
+    $a = $lib_geo->getBaiduBusStops('571', '北京市');
+
+    $l = $lib_geo->getRectByGeo($a['stops'][0]['loc'], 1);
+
+    // var_dump($l);die;
+
+    $a = $lib_geo->getBaiduNearby('公园', $l, '北京市');
+
+    var_dump($a);
+} catch (\Exception $e) {
+    echo $e->getMessage();
+}

@@ -135,34 +135,60 @@ class Geo
         }
     }
 
+    public function getRectByGeo($geo, $dis) {
+        try {
+            //$lng 、$lat 经纬度
+            $lat = $geo['lat'];
+            $lng = $geo['lng'];
+            $half = 6371;
+            $distance = $dis; //3公里
+            $dlng = 2 * asin(sin($distance / (2 * $half)) / cos(deg2rad($lat)));
+            $dlng = rad2deg($dlng);
+            $dlat = $distance / $half;
+            $dlat = rad2deg($dlat);
+            $fourpoint = array(
+                array('lat' => $lat - $dlat, 'lng' => $lng - $dlng),
+                array('lat' => $lat + $dlat, 'lng' => $lng + $dlng),
+            );
+
+            return $fourpoint;
+        } catch (Exception $e) {
+            throw $e;
+        }
+    }
+
 
     /*
      * @desc 根据两点间的经纬度计算距离
      * @param float $lat 纬度值
      * @param float $lng 经度值
      */
-    function getDistance($geo1, $geo2)
+    public function getDistance($geo1, $geo2)
     {
-        $lat1 = $geo1['lat'];
-        $lng1 = $geo1['lng'];
-        $lat2 = $geo2['lat'];
-        $lng2 = $geo2['lng'];
+        try {
+            $lat1 = $geo1['lat'];
+            $lng1 = $geo1['lng'];
+            $lat2 = $geo2['lat'];
+            $lng2 = $geo2['lng'];
 
-        $earthRadius = 6367000; //approximate radius of earth in meters
+            $earthRadius = 6367000; //approximate radius of earth in meters
 
-        $lat1 = ($lat1 * pi() ) / 180;
-        $lng1 = ($lng1 * pi() ) / 180;
+            $lat1 = ($lat1 * pi() ) / 180;
+            $lng1 = ($lng1 * pi() ) / 180;
 
-        $lat2 = ($lat2 * pi() ) / 180;
-        $lng2 = ($lng2 * pi() ) / 180;
+            $lat2 = ($lat2 * pi() ) / 180;
+            $lng2 = ($lng2 * pi() ) / 180;
 
-        $calcLongitude = $lng2 - $lng1;
-        $calcLatitude = $lat2 - $lat1;
-        $stepOne = pow(sin($calcLatitude / 2), 2) + cos($lat1) * cos($lat2) * pow(sin($calcLongitude / 2), 2);
-        $stepTwo = 2 * asin(min(1, sqrt($stepOne)));
-        $calculatedDistance = $earthRadius * $stepTwo;
+            $calcLongitude = $lng2 - $lng1;
+            $calcLatitude = $lat2 - $lat1;
+            $stepOne = pow(sin($calcLatitude / 2), 2) + cos($lat1) * cos($lat2) * pow(sin($calcLongitude / 2), 2);
+            $stepTwo = 2 * asin(min(1, sqrt($stepOne)));
+            $calculatedDistance = $earthRadius * $stepTwo;
 
-        return round($calculatedDistance);
+            return round($calculatedDistance);
+        } catch (Exception $e) {
+            throw $e;
+        }
     }
 
     // 获取百度地图中的区域范围
@@ -407,6 +433,46 @@ class Geo
 
             return $info;
         } catch (\Exception $e) {
+            throw $e;
+        }
+    }
+
+    public function getBaiduNearby($word, $geos, $city_name)
+    {
+        try {
+            foreach ($geos as &$geo) {
+                $geo = $this->lngLatToMercator($geo);
+                $geo = implode(',', $geo);
+            }
+            $l = "({$l[0]};{$l[1]})";
+
+            $city_id = $this->_get_baidu_city_id($city_name);
+            $url = "http://map.baidu.com/?qt=spot&c={$city_id}&wd={$word}&on_gel=1&rn=50&ie=utf-8&b={$l}";
+
+            $str_res = Net::curl_get($url);
+            $arr_res = json_decode($str_res, true);
+
+            foreach ($arr_res['content'] as $res) {
+                $geo = [
+                    'lng' => $res['x'],
+                    'lat' => $res['y']
+                ];
+                $geo = $this->mercatorToLngLat($geo);
+
+                $return[] = [
+                    'name'   => $res['name'],
+                    'addr'   => $res['addr'],
+                    'area'   => $res['area'],
+                    'uid'    => $res['uid'],
+                    'alias'  => $res['alias'],
+                    'dl_tag' => $res['dl_tag'],
+                    'tel'    => $res['tel'],
+                    'loc'    => $geo
+                ];
+            }
+            Arr::filter_empty($return);
+            return $return;
+        } catch (Exception $e) {
             throw $e;
         }
     }
