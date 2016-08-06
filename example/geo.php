@@ -2,8 +2,8 @@
 require_once __DIR__ . '/../autoload.php';
 
 use \Leo\Geo;
+$lib_geo = new Geo();
 
-$geo = new Geo();
-$arr = $geo->getBaiduSubwayStops('北京市');
+$a = $lib_geo->getBaiduBusStops('通44', '北京市');
 
-echo json_encode($arr);
+var_dump($a);

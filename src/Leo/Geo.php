@@ -14,6 +14,13 @@ class Geo
 {
     const BOROUGH_BAIDU_CATE = [25, 238];
     const OFFICE_BAIDU_CATE = [24, 236];
+
+    const BUS_BAIDU_CATE = [903, 904];
+    // 百度的类型对应关系
+    private $_baidu_catelog_mapping = [
+        903 => '公交线路',
+        904 => '普通日行公交车',
+    ];
     // 高德的类型对应关系
     private $_gaode_catelog_mapping = [
         10102 => '加油站',
@@ -327,6 +334,48 @@ class Geo
             $arr_res = json_decode($str_res, true);
 
             return $arr_res;
+        } catch (\Exception $e) {
+            throw $e;
+        }
+    }
+
+    // 从百度接口拿公交线路数据
+    public function getBaiduBusStops($line_name, $city_name)
+    {
+        try {
+            $uid = $this->getBaiduUid($line_name, $city_name, self::BUS_BAIDU_CATE);
+            $city_id = $this->_get_baidu_city_id($city_name);
+
+            $url = "http://map.baidu.com/?qt=bsl&tps=&newmap=1&uid={$uid}&c={$city_id}";
+
+            $str_res = Net::curl_get($url);
+            $arr_res = json_decode($str_res, true);
+
+            $content = $arr_res['content'][0];
+            if (empty($content)) {
+                throw new Exception('无此站点数据');
+            }
+            $info['time'][] = [
+                'first_time' => $content['startTime'],
+                'last_time' => $content['endTime'],
+                'terminals' => $content['line_direction']
+            ];
+            $info['time'][] = [
+                'first_time' => $content['pair_line']['startTime'],
+                'last_time' => $content['pair_line']['endTime'],
+                'terminals' => $content['pair_line']['direction']
+            ];
+
+            foreach ($content['stations'] as $stop) {
+                list($geo['lng'], $geo['lat'])= explode(',', explode(';', explode('|', $stop['geo'])[2])[0]);
+                $geo = $this->mercatorToLngLat($geo);
+                $info['stops'][] = [
+                    'name' => $stop['name'],
+                    'loc' => $geo
+                ];
+            }
+
+            return $info;
         } catch (\Exception $e) {
             throw $e;
         }
