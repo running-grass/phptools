@@ -332,7 +332,35 @@ class Geo
         }
     }
 
-    public function getBaiduSubways($city_name)
+    // 从百度接口获取所有的地铁线路
+    public function getBaiduSubwayLines($city_name)
+    {
+        try {
+            $city_id = $this->_get_baidu_city_id($city_name);
+            $url = "http://map.baidu.com/?qt=bsi&c={$city_id}";
+
+            $str_res = Net::curl_get($url);
+            $arr_res = json_decode($str_res, true);
+
+            $arr_res = $arr_res['content'];
+            $arr = [];
+            foreach ($arr_res as $res) {
+                $line_name = $res['line_name'];
+                $line_name = explode('(', $line_name)[0];
+                foreach ($res['stops'] as $stop) {
+                    $arr_line[$line_name][] = $stop['name'];
+                }
+                $arr_line[$line_name] = Arr::array_vu($arr_line[$line_name]);
+                unset($stop);
+            }
+            return $arr_line;
+        } catch (\Exception $e) {
+            throw $e;
+        }
+    }
+
+    // 从百度接口获取所有的地铁站点
+    public function getBaiduSubwayStops($city_name)
     {
         try {
             $city_id = $this->_get_baidu_city_id($city_name);
@@ -353,9 +381,35 @@ class Geo
                     ];
                     $geo = $this->mercatorToLngLat($geo);
 
-                    $arr[$line_name][$stop['name']] = $geo;
+                    $arr[$stop['name']] = [
+                        'baidu_uid' => $stop['uid'],
+                        'loc' => $geo,
+                    ];
+
                 }
+                unset($stop);
             }
+            unset($arr_res, $res);
+
+            foreach ($arr as &$stop) {
+                $url = "http://map.baidu.com/?qt=inf&uid={$stop['baidu_uid']}";
+                $str_res = Net::curl_get($url);
+                $arr_res = json_decode($str_res, true);
+
+                foreach ($arr_res['content']['ext']['line_info'] as $v) {
+                    $stop['line_name'] = Arr::array_vum($stop['line_name'], [$v['abb']]);
+                    $stop['line_byname'] = Arr::array_vum($stop['line_byname'], [$v['line_name']]);
+                    $stop['line_byname'] = Arr::array_vum($stop['line_byname'], $stop['line_name']);
+                    $stop['time'][] = [
+                        'first_time' => $v['first_time'],
+                        'last_time' => $v['last_time'],
+                        'terminals' => $v['terminals']
+                    ];
+                }
+                break;
+            }
+            unset($arr_res);
+            Arr::filter_empty($arr);
             return $arr;
         } catch (\Exception $e) {
             throw $e;
