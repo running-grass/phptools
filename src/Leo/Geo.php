@@ -135,6 +135,36 @@ class Geo
         }
     }
 
+
+    /*
+     * @desc 根据两点间的经纬度计算距离
+     * @param float $lat 纬度值
+     * @param float $lng 经度值
+     */
+    function getDistance($geo1, $geo2)
+    {
+        $lat1 = $geo1['lat'];
+        $lng1 = $geo1['lng'];
+        $lat2 = $geo2['lat'];
+        $lng2 = $geo2['lng'];
+
+        $earthRadius = 6367000; //approximate radius of earth in meters
+
+        $lat1 = ($lat1 * pi() ) / 180;
+        $lng1 = ($lng1 * pi() ) / 180;
+
+        $lat2 = ($lat2 * pi() ) / 180;
+        $lng2 = ($lng2 * pi() ) / 180;
+
+        $calcLongitude = $lng2 - $lng1;
+        $calcLatitude = $lat2 - $lat1;
+        $stepOne = pow(sin($calcLatitude / 2), 2) + cos($lat1) * cos($lat2) * pow(sin($calcLongitude / 2), 2);
+        $stepTwo = 2 * asin(min(1, sqrt($stepOne)));
+        $calculatedDistance = $earthRadius * $stepTwo;
+
+        return round($calculatedDistance);
+    }
+
     // 获取百度地图中的区域范围
     public function get_baidu_area($word, $city_name = '北京市', $categorys)
     {
