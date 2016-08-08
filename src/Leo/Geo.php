@@ -444,7 +444,7 @@ class Geo
                 $geo = $this->lngLatToMercator($geo);
                 $geo = implode(',', $geo);
             }
-            $l = "({$l[0]};{$l[1]})";
+            $l = "({$geos[0]};{$geos[1]})";
 
             $city_id = $this->_get_baidu_city_id($city_name);
             $url = "http://map.baidu.com/?qt=spot&c={$city_id}&wd={$word}&on_gel=1&rn=50&ie=utf-8&b={$l}";
@@ -454,8 +454,8 @@ class Geo
 
             foreach ($arr_res['content'] as $res) {
                 $geo = [
-                    'lng' => $res['x'],
-                    'lat' => $res['y']
+                    'lng' => $res['x'] / 100,
+                    'lat' => $res['y'] / 100
                 ];
                 $geo = $this->mercatorToLngLat($geo);
 

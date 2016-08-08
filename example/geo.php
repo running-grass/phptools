@@ -8,9 +8,10 @@ try {
 
     $a = $lib_geo->getBaiduBusStops('571', '北京市');
 
-    $l = $lib_geo->getRectByGeo($a['stops'][0]['loc'], 1);
 
-    // var_dump($l);die;
+    $l = $lib_geo->getRectByGeo($a['stops'][20]['loc'], 1);
+
+    // var_dump($a);die;
 
     $a = $lib_geo->getBaiduNearby('公园', $l, '北京市');
 
