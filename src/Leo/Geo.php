@@ -470,7 +470,9 @@ class Geo
                     'loc'    => $geo
                 ];
             }
-            Arr::filter_empty($return);
+            if (isset($return)) {
+                Arr::filter_empty($return);
+            }
             return $return;
         } catch (Exception $e) {
             throw $e;
@@ -820,8 +822,8 @@ class Geo
         }
         $lngLat = $this->convertor($mLngLat, $mc);
         $lngLat = [
-            'lng' =>  round($lngLat['lng'], 6),
-            'lat' =>  round($lngLat['lat'], 6)
+            'lng' =>  round($lngLat['lng'], 8),
+            'lat' =>  round($lngLat['lat'], 8)
         ];
         return $lngLat;
     }
@@ -849,8 +851,8 @@ class Geo
         }
         $cE = $this->convertor($point, $mc);
         $lng_lat = [
-            'lng' => round($cE['lng'], 2),
-            'lat' => round($cE['lat'], 2)
+            'lng' => round($cE['lng'], 4),
+            'lat' => round($cE['lat'], 4)
         ];
         return $lng_lat;
     }
