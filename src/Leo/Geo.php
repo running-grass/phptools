@@ -245,7 +245,7 @@ class Geo
         try {
             $list = $this->_getGaodeList($word, $city_name);
             $geo = $this->_getGaodeMatchGeo($list, $this->_gaode_arr_borough);
-            $geo = $this->_convertCoord($geo);
+            $geo = $this->convertCoord($geo);
             return $geo;
         } catch (\Exception $e) {
             throw $e;
@@ -743,7 +743,7 @@ class Geo
     }
 
     // 百度坐标转换成经纬度
-    private function _convertCoord($geo, $from = 3, $to = 5)
+    public function convertCoord($geo, $from = 3, $to = 5)
     {
         try {
             // 判空处理
