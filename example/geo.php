@@ -7,15 +7,18 @@ try {
     $lib_geo = new Geo();
 
     $a = $lib_geo->getBaiduBusStops('571', '北京市');
+    $gs = [
+        $a['stops'][22]['loc'],
+        $a['stops'][21]['loc'],
+    ];
 
+    $l = $lib_geo->getDistance($gs[0], $gs[1]);
+    echo $l ;
+    foreach (range(1, 10000) as $v) {
+        $b = $lib_geo->getBaiduWalkDis($gs);
+        var_dump("[{$v}]  {$b}");
+    }
 
-    $l = $lib_geo->getRectByGeo($a['stops'][20]['loc'], 1);
-
-    // var_dump($a);die;
-
-    $a = $lib_geo->getBaiduNearby('公园', $l, '北京市');
-
-    var_dump($a);
 } catch (\Exception $e) {
     echo $e->getMessage();
 }

@@ -141,7 +141,7 @@ class Geo
             $lat = $geo['lat'];
             $lng = $geo['lng'];
             $half = 6371;
-            $distance = $dis; //3公里
+            $distance = $dis/1000; //3公里
             $dlng = 2 * asin(sin($distance / (2 * $half)) / cos(deg2rad($lat)));
             $dlng = rad2deg($dlng);
             $dlat = $distance / $half;
@@ -432,6 +432,24 @@ class Geo
             }
 
             return $info;
+        } catch (\Exception $e) {
+            throw $e;
+        }
+    }
+
+    public function getBaiduWalkDis($geos) {
+        try {
+            $g1 = implode(',', $this->lngLatToMercator($geos[0]));
+            $g2 = implode(',', $this->lngLatToMercator($geos[1]));
+            if (empty($g1) || empty($g2)) {
+                throw new Exception('参数错误');
+            }
+
+            $url = 'http://map.baidu.com/?qt=walk&sn=1$$$$' . $g1 . '$$11$$0$$$$&en=1$$$$' . $g2 . '$$22$0$$$$';
+            $html = Net::curl_get($url);
+
+            $arr = json_decode($html, true);
+            return $arr['content']['dis'];
         } catch (\Exception $e) {
             throw $e;
         }
