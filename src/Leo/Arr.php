@@ -66,6 +66,13 @@ class Arr
         try {
             if (empty($arr)) $arr = [];
             if (empty($arr1)) $arr1 = [];
+
+            if (!is_array($arr)) {
+                $arr = [$arr];
+            }
+            if (!is_array($arr1)) {
+                $arr1 = [$arr1];
+            }
             return array_values(array_unique(array_filter(array_merge($arr, $arr1))));
         } catch (\Exception $e) {
             throw $e;
@@ -79,6 +86,13 @@ class Arr
         try {
             if (empty($arr)) $arr = [];
             if (empty($arr1)) $arr1 = [];
+
+            if (!is_array($arr)) {
+                $arr = [$arr];
+            }
+            if (!is_array($arr1)) {
+                $arr1 = [$arr1];
+            }
             return array_values(array_filter(array_merge($arr, $arr1)));
         } catch (\Exception $e) {
             throw $e;
@@ -90,6 +104,9 @@ class Arr
     public static function array_vu($arr)
     {
         try {
+            if (!is_array($arr)) {
+                $arr = (array)$arr;
+            }
             return array_values(array_filter(array_unique($arr)));
         } catch (\Exception $e) {
             throw $e;

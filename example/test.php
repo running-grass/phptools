@@ -1,4 +1,5 @@
 <?php
+phpinfo();die;
 require_once __DIR__ . '/../autoload.php';
 
 use \Leo\Arr;
