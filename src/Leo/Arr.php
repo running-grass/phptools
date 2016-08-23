@@ -48,6 +48,8 @@ class Arr
                     if (isset($arr[$k])) {
                         if (is_array($v)) {
                             $arr[$k] = self::merge_supplement($arr[$k], $arr1[$k]);
+                        } elseif ('' === $arr[$k]) {
+                            $arr[$k] = $arr1[$k];
                         }
                     } else {
                         $arr[$k] = $v;
