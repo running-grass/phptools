@@ -13,16 +13,22 @@ class Arr
             }
 
             foreach ($arr as $k => &$v) {
-                if (is_array($v)) {
-                    self::filter_empty($v);
+                if (empty($v)) {
+                    unset($arr[$k]);
                 } else {
-                    if (empty($v)) {
-                        unset($arr[$k]);
+                    if (is_array($v)) {
+                        $arr2 = self::filter_empty($v);
+
+                        if (empty($arr2)) {
+                            unset($arr[$k]);
+                        } else {
+                            $v = $arr2;
+                        }
                     }
                 }
             }
 
-            return 0;
+            return $arr;
         } catch (\Exception $e) {
             throw $e;
         }
@@ -45,7 +51,7 @@ class Arr
                         return self::array_vum($arr, $arr1);
                     }
                 } else {
-                    if (isset($arr[$k])) {
+                    if (empty($arr[$k])) {
                         if (is_array($v)) {
                             $arr[$k] = self::merge_supplement($arr[$k], $arr1[$k]);
                         } elseif ('' === $arr[$k]) {
