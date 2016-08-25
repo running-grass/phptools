@@ -355,9 +355,23 @@ class Geo
         try {
             $arr_res = $this->getContentByBaiduApi($word, $city_name);
             $uid = '';
+
+            if (empty($arr_res['content'][0])) {
+                $uid = $arr_res['content']['uid'];
+            }
+
+            if (empty($mercator) && empty($categorys)) {
+                $mercator = [
+                    'lng' => $list[0]['x'] / 100,
+                    'lat' => $list[0]['y'] / 100
+                ];
+            }
+
+
             if ($word == $arr_res['content'][0]['name']) {
                 $uid = $arr_res['content'][0]['uid'];
             }
+
 
             if (empty($uid)) {
                 foreach ($arr_res['content'] as $v) {
@@ -644,6 +658,54 @@ class Geo
                 return new \Exception('数据为空');
             }
             return $return;
+        } catch (\Exception $e) {
+            throw $e;
+        }
+    }
+
+    // 获取城区商圈的边界信息
+    public function getBaiduCityareaBorder($word, $city_name)
+    {
+        try {
+            // 获取坐标的接口
+            $uid = $this->getBaiduUid($word, $city_name, $categorys);
+            $url = "http://map.baidu.com/?qt=ext&l=10&uid={$uid}";
+
+            $arr_res = json_decode(Net::curl_get($url), true);
+
+            $list = $arr_res['content'];
+
+            $geo = explode('|', $list['geo']);
+            $geo1 = explode(';', $geo[2]);
+            $arr = explode(',', $geo1[0]);
+
+            $arr2 = array_chunk($arr, 2);
+
+            foreach ($arr2 as $v) {
+                $tem = [
+                    'lng' => $v[0],
+                    'lat' => $v[1]
+                ];
+
+                $tem = $this->mercatorToLngLat($tem);
+                $arr3[] = $tem;
+            }
+
+            if (isset($geo1[1])) {
+                $arr_ext = explode(',', $geo1[1]);
+                foreach ($arr_ext as $v) {
+                    $tem = [
+                        'lng' => $v[0],
+                        'lat' => $v[1]
+                    ];
+
+                    $tem = $this->mercatorToLngLat($tem);
+                    $arr4[] = $tem;
+                }
+
+            }
+
+            return $arr3;
         } catch (\Exception $e) {
             throw $e;
         }
