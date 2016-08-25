@@ -664,7 +664,22 @@ class Geo
 
             $list = $arr_res['content'];
 
+            if (empty($list[0])) {
+                if (isset($list['geo'])) {
+                    $geo = explode('|', $list['geo']);
+                    $geo = explode(';', $geo[2])[0];
+                    list($mercator['lng'], $mercator['lat']) = explode(',', $geo);
+                }
+            }
+            if (empty($mercator) && empty($categorys)) {
+                $mercator = [
+                    'lng' => $list[0]['x'] / 100,
+                    'lat' => $list[0]['y'] / 100
+                ];
+            }
+
             if (empty($mercator)) {
+
                 if ($word == $list[0]['name']) {
                     $mercator = [
                         'lng' => $list[0]['x'] / 100,
@@ -708,7 +723,9 @@ class Geo
                 }
             }
 
-            $geo = $this->mercatorToLngLat($mercator);
+            if (!empty($mercator['lat'])) {
+                $geo = $this->mercatorToLngLat($mercator);
+            }
             return $geo;
         } catch (\Exception $e) {
             return null;

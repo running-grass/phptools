@@ -5,20 +5,8 @@ use \Leo\Geo;
 
 try {
     $lib_geo = new Geo();
-
-    $a = $lib_geo->getBaiduBusStops('571', '北京市');
-    $gs = [
-        $a['stops'][22]['loc'],
-        $a['stops'][21]['loc'],
-    ];
-
-    $l = $lib_geo->getDistance($gs[0], $gs[1]);
-    echo $l ;
-    foreach (range(1, 10000) as $v) {
-        $b = $lib_geo->getBaiduWalkDis($gs);
-        var_dump("[{$v}]  {$b}");
-    }
-
+    $res = $lib_geo->getBaiduGeo2('门头沟其它', '北京市');
+    var_dump($res);
 } catch (\Exception $e) {
     echo $e->getMessage();
 }
