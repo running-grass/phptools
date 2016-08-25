@@ -38,8 +38,15 @@ class Arr
     public static function merge_supplement($arr, $arr1)
     {
         try {
-            if (empty($arr) || empty($arr1)) {
-                throw new Exception('参数为空');
+            if (empty($arr)) {
+                if (empty($arr1)) {
+                    return null;
+                } else {
+                    return $arr1;
+                }
+            }
+            if (empty($arr1)) {
+                return $arr;
             }
 
             foreach ($arr1 as $k => $v) {
