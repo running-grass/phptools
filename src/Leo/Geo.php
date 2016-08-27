@@ -472,6 +472,7 @@ class Geo
     public function getBaiduNearby($word, $geos, $city_name)
     {
         try {
+            $word = urlencode($word);
             foreach ($geos as &$geo) {
                 $geo = $this->lngLatToMercator($geo);
                 $geo = implode(',', $geo);
@@ -496,11 +497,18 @@ class Geo
                     'addr'   => $res['addr'],
                     'area'   => $res['area'],
                     'uid'    => $res['uid'],
-                    'alias'  => $res['alias'],
-                    'dl_tag' => $res['dl_tag'],
+                    'alias'  => array_filter($res['alias'], function($name) {
+                        $name = trim($name);
+                        return !empty($name);
+                    }),
+                    'tag' => array_filter(explode(' ',$res['di_tag'])),
+                    'category' => explode(';', $res['std_tag'])[0],
+                    'sub_category' => explode(';', $res['std_tag'])[1],
                     'tel'    => $res['tel'],
                     'loc'    => $geo
                 ];
+
+                unset($geo, $res);
             }
             if (isset($return)) {
                 Arr::filter_empty($return);
@@ -585,7 +593,6 @@ class Geo
                         'terminals' => $v['terminals']
                     ];
                 }
-                break;
             }
             unset($arr_res);
             Arr::filter_empty($arr);
