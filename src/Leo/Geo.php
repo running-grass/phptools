@@ -12,10 +12,10 @@ use \Leo\File;
  */
 class Geo
 {
-    const BOROUGH_BAIDU_CATE = [25, 238];
-    const OFFICE_BAIDU_CATE = [24, 236];
+    public static $BOROUGH_BAIDU_CATE = [25, 238];
+    public static $OFFICE_BAIDU_CATE = [24, 236];
 
-    const BUS_BAIDU_CATE = [903, 904];
+    public static $BUS_BAIDU_CATE = [903, 904];
     // 百度的类型对应关系
     private $_baidu_catelog_mapping = [
         903 => '公交线路',
@@ -413,7 +413,7 @@ class Geo
     public function getBaiduBusStops($line_name, $city_name)
     {
         try {
-            $uid = $this->getBaiduUid($line_name, $city_name, self::BUS_BAIDU_CATE);
+            $uid = $this->getBaiduUid($line_name, $city_name, self::$BUS_BAIDU_CATE);
             $city_id = $this->_get_baidu_city_id($city_name);
 
             $url = "http://map.baidu.com/?qt=bsl&tps=&newmap=1&uid={$uid}&c={$city_id}";
