@@ -142,7 +142,26 @@ class Arr
                 ];
             }
 
+            unset($arr, $col_key, $col_value, $k, $v);
             return $res;
+        } catch (\Exception $e) {
+            throw $e;
+        }
+    }
+
+    // 二维数组根据指定key去重
+    public static function array_unique_by_column($arr, $col)
+    {
+        try {
+            if (!is_array($arr) || empty($arr)) {
+                return false;
+            }
+
+            $temp = [];
+            foreach ($arr as $k => $v) {
+                $temp[$v[$col]] = $v;
+            }
+            return array_values($temp);
         } catch (\Exception $e) {
             throw $e;
         }
