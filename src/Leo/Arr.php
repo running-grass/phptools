@@ -126,4 +126,25 @@ class Arr
             throw $e;
         }
     }
+
+    // 一维数组转变为二维数组
+    public static function array_kv_to_array($arr, $col_key, $col_value)
+    {
+        try {
+            if (!is_array($arr) || empty($arr)) {
+                return false;
+            }
+
+            foreach ($arr as $k => $v) {
+                $res[] = [
+                    $col_key   => $k,
+                    $col_value => $v
+                ];
+            }
+
+            return $res;
+        } catch (\Exception $e) {
+            throw $e;
+        }
+    }
 }
