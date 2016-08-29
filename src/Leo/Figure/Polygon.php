@@ -205,6 +205,15 @@ class Polygon extends Base
     private function setPoints($arr_point)
     {
         try {
+            foreach ($arr_point as $k => $v) {
+                if ($arr_point[$k - 1] == $v) {
+                    unset($arr_point[$k -1]);
+                }
+            }
+            if ($arr_point[0] == end($arr_point)) {
+                unset($arr_point[0]);
+            }
+            $arr_point = array_values($arr_point);
             $this->points = $arr_point;
         } catch (\Exception $e) {
             throw $e;
