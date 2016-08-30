@@ -451,6 +451,64 @@ class Geo
         }
     }
 
+    // 获取百度的公共交通时间
+    public function getBaiduBusDis($geos) {
+        try {
+            $g1 = implode(',', $this->lngLatToMercator($geos[0]));
+            $g2 = implode(',', $this->lngLatToMercator($geos[1]));
+            if (empty($g1) || empty($g2)) {
+                throw new Exception('参数错误');
+            }
+
+            $url = 'http://map.baidu.com/?qt=bt&sn=1$$$$' . $g1 . '$$11$$0$$$$&en=1$$$$' . $g2 . '$$22$0$$$$';
+            $html = Net::curl_get($url);
+
+            $arr = json_decode($html, true);
+            if (!isset($arr['content'][0])) {
+                return false;
+            }
+            return [
+                'dis' => $arr['content'][0]['exts'][0]['distance'],
+                'time' => $arr['content'][0]['exts'][0]['time'],
+                'price' => $arr['content'][0]['exts'][0]['price'],
+                'subway_price' => $arr['content'][0]['exts'][0]['subway_price'],
+                'walk_distance' => $arr['content'][0]['exts'][0]['walk_distance'],
+                'walk_time' => $arr['content'][0]['exts'][0]['walk_time'],
+                'taxi' => $arr['taxi']
+            ];
+        } catch (\Exception $e) {
+            throw $e;
+        }
+    }
+
+    // 获取百度的驾车时间
+    public function getBaiduDriveDis($geos) {
+        try {
+            $g1 = implode(',', $this->lngLatToMercator($geos[0]));
+            $g2 = implode(',', $this->lngLatToMercator($geos[1]));
+            if (empty($g1) || empty($g2)) {
+                throw new Exception('参数错误');
+            }
+
+            $url = 'http://map.baidu.com/?qt=nav&sn=1$$$$' . $g1 . '$$11$$0$$$$&en=1$$$$' . $g2 . '$$22$0$$$$&version=4';
+            $html = Net::curl_get($url);
+
+            $arr = json_decode($html, true);
+            if (!isset($arr['content']['routes'][0])) {
+                return false;
+            }
+            return [
+                'dis' => $arr['content']['routes'][0]['legs'][0]['distance'],
+                'time' => $arr['content']['routes'][0]['legs'][0]['duration'],
+                'light_num' => $arr['content']['routes'][0]['light_num'],
+                'taxi_price' => $arr['content']['taxis'][0]['total_price']
+            ];
+        } catch (\Exception $e) {
+            throw $e;
+        }
+    }
+
+    // 获取百度的步行时间
     public function getBaiduWalkDis($geos) {
         try {
             $g1 = implode(',', $this->lngLatToMercator($geos[0]));
@@ -463,7 +521,32 @@ class Geo
             $html = Net::curl_get($url);
 
             $arr = json_decode($html, true);
-            return $arr['content']['dis'];
+            return [
+                'dis' => $arr['content']['dis'],
+                'time' => $arr['content']['time']
+            ];
+        } catch (\Exception $e) {
+            throw $e;
+        }
+    }
+
+    // 获取百度的骑行时间
+    public function getBaiduRideDis($geos) {
+        try {
+            $g1 = implode(',', $this->lngLatToMercator($geos[0]));
+            $g2 = implode(',', $this->lngLatToMercator($geos[1]));
+            if (empty($g1) || empty($g2)) {
+                throw new Exception('参数错误');
+            }
+
+            $url = 'http://map.baidu.com/?qt=cycle&sn=1$$$$' . $g1 . '$$11$$0$$$$&en=1$$$$' . $g2 . '$$22$0$$$$';
+            $html = Net::curl_get($url);
+
+            $arr = json_decode($html, true);
+            return [
+                'dis' => $arr['content']['dis'],
+                'time' => $arr['content']['time']
+            ];
         } catch (\Exception $e) {
             throw $e;
         }
@@ -584,9 +667,10 @@ class Geo
                 $arr_res = json_decode($str_res, true);
 
                 foreach ($arr_res['content']['ext']['line_info'] as $v) {
-                    $stop['line_name'] = Arr::array_vum($stop['line_name'], [$v['abb']]);
-                    $stop['line_byname'] = Arr::array_vum($stop['line_byname'], [$v['line_name']]);
-                    $stop['line_byname'] = Arr::array_vum($stop['line_byname'], $stop['line_name']);
+                    $stop['line_info'][$v['line_name']] = [
+                        'line_name' => $v['line_name'],
+                        'line_abb' => $v['abb']
+                    ];
                     $stop['time'][] = [
                         'first_time' => $v['first_time'],
                         'last_time' => $v['last_time'],
