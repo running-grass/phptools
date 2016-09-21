@@ -94,6 +94,10 @@ class Geo
         '上海市' => [
             'gaode_id' => 310100,
             'baidu_id' => 289
+        ],
+        '哈尔滨市' => [
+            'gaode_id' => 230100,
+            'baidu_id' => 48
         ]
     ];
 
@@ -754,6 +758,34 @@ class Geo
         }
     }
 
+    public function getGaodeCityareaBorder($word, $city_name)
+    {
+        try {
+            // 获取坐标的接口
+            $cid = $this->_get_gaode_city_id($city_name);
+            $word = urlencode($word);
+            $url = "http://ditu.amap.com/service/poiInfo?query_type=TQUERY&city={$cid}&keywords={$word}";
+
+            $arr_res = json_decode(Net::curl_get($url), true);
+
+            if ('1' == $arr_res['status']) {
+                foreach ($arr_res['data'] as $data) {
+                    if ('polyline' != $data['type']) {
+                        continue;
+                    }
+
+                    $list = $data['list'][0]['path'];
+                    break;
+                }
+            }
+
+            $list = $this->convertCoords($list, $from = 3, $to = 5);
+            return $list;
+        } catch (\Exception $e) {
+            throw $e;
+        }
+    }
+
     // 获取城区商圈的边界信息
     public function getBaiduCityareaBorder($word, $city_name)
     {
@@ -913,6 +945,33 @@ class Geo
     }
 
     // 百度坐标转换成经纬度
+    /*
+      [from]
+      取值为如下：
+
+      1：GPS设备获取的角度坐标，wgs84坐标;
+
+      2：GPS获取的米制坐标、sogou地图所用坐标;
+
+      3：google地图、soso地图、aliyun地图、mapabc地图和amap地图所用坐标，国测局坐标;
+
+      4：3中列表地图坐标对应的米制坐标;
+
+      5：百度地图采用的经纬度坐标;
+
+      6：百度地图采用的米制坐标;
+
+      7：mapbar地图坐标;
+
+      8：51地图坐标
+
+      [to]
+      有两种可供选择：5、6。
+
+      5：bd09ll(百度经纬度坐标),
+
+      6：bd09mc(百度米制经纬度坐标);
+     */
     public function convertCoord($geo, $from = 3, $to = 5)
     {
         try {
@@ -932,6 +991,39 @@ class Geo
             $geo['lat'] = $res['result'][0]['y'];
 
             return $geo;
+        } catch (\Exception $e) {
+            throw $e;
+        }
+    }
+
+    public function convertCoords($geos, $from = 3, $to = 5)
+    {
+        try {
+            $list = [];
+
+            $geos_block = array_chunk($geos, 100);
+
+            foreach ($geos_block as $ps) {
+                $str = '';
+                foreach ($ps as $p) {
+                    $str .= "{$p['lng']},{$p['lat']};";
+                }
+                $str = trim($str, ';');
+                $url = "http://api.map.baidu.com/geoconv/v1/?coords={$str}&from={$from}&to={$to}&ak=EF06cfb26173665ad80b8edf6a328192";
+                $res = json_decode(file_get_contents($url), true);
+
+                if (0 != $res['status']) {
+                    throw new \Exception("百度坐标转换接口请求失败，失败信息（{$res['message']}}）");
+                }
+                foreach ($res['result'] as $geo) {
+                    $list[] = [
+                        'lng' => $geo['x'],
+                        'lat' => $geo['y']
+                    ];
+                }
+            }
+
+            return $list;
         } catch (\Exception $e) {
             throw $e;
         }
