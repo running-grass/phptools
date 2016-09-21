@@ -15,7 +15,7 @@ class File
      *
      * @author leo<leo19920823@gmail.com>
      *
-     * @param $data array 需要保存的数据 $data[表名][行号][列名]
+     * @param $data array 需要保存的数据 $data[行号][列名]
      * @param $filename string 需要输出的文件名
      * @param $save_path string 默认是输出到浏览器，填写路径末尾加/
      *
