@@ -211,7 +211,7 @@ class Geo
                     if ('marker' == $data['type']) {
                         $temp = $data['list'][0]['shape_region'];
                         $g = explode(',', $temp);
-                        if (!empty($g)) {
+                        if (!empty($g) && 4 == count($g)) {
                             $res['general'] = [
                                 [
                                     'lng' => $g[0],
