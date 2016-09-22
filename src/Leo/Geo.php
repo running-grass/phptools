@@ -204,27 +204,46 @@ class Geo
             $url = "http://ditu.amap.com/service/poiInfo?query_type=TQUERY&need_utd=true&utd_sceneid=1000&city={$city_id}&keywords={$word}";
             $str_res = Net::curl_get($url);
 
+            $res = [];
             $arr_res = json_decode($str_res, true);
             if ('1' == $arr_res['status']) {
                 foreach ($arr_res['data'] as $data) {
-                    if ('polygon' != $data['type']) {
-                        continue;
-                    }
+                    if ('marker' == $data['type']) {
+                        $temp = $data['list'][0]['shape_region'];
+                        $g = explode(',', $temp);
+                        if (!empty($g)) {
+                            $res['general'] = [
+                                [
+                                    'lng' => $g[0],
+                                    'lat' => $g[3]
+                                ],
+                                [
+                                    'lng' => $g[2],
+                                    'lat' => $g[1]
+                                ]
+                            ];
+                            $res['general'] = $this->convertCoords($res['general'], $from = 3, $to = 5);
+                        }
+                    } elseif ('polygon' == $data['type']) {
+                        $temp = $data['list'][0]['bound'];
+                        array_pop($temp);
+                        foreach ($temp as $v) {
+                            $g = explode(',', $v);
+                            $list[] = [
+                                'lng' => $g[0],
+                                'lat' => $g[1]
+                            ];
+                        }
 
-                    $list = $data['list'][0]['bound'];
-                    break;
+                        if (!empty($list)) {
+                            $res['drawing'] = $this->convertCoords($list, $from = 3, $to = 5);
+                        }
+                    }
                 }
             } else {
                 return null;
             }
-
-            if (empty($list)) {
-                return null;
-            } else {
-                $list = $this->convertCoords($list, $from = 3, $to = 5);
-                return $list;
-            }
-
+            return $res;
         } catch (Exception $e) {
             throw $e;
         }
