@@ -282,6 +282,8 @@ class Geo
                 $drawing[] = $this->mercatorToLngLat($pos);
             }
 
+            array_pop($drawing);
+
             $general[0] = $this->mercatorToLngLat($general[0]);
             $general[1] = $this->mercatorToLngLat($general[1]);
 
