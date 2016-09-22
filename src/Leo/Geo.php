@@ -195,6 +195,40 @@ class Geo
         }
     }
 
+    // 获取高德地图中的区域范围
+    public function get_gaode_area($word, $city_name)
+    {
+        try {
+            $word = urlencode(trim($word));
+            $city_id = $this->_get_gaode_city_id($city_name);
+            $url = "http://ditu.amap.com/service/poiInfo?query_type=TQUERY&need_utd=true&utd_sceneid=1000&city={$city_id}&keywords={$word}";
+            $str_res = Net::curl_get($url);
+
+            $arr_res = json_decode($str_res, true);
+            if ('1' == $arr_res['status']) {
+                foreach ($arr_res['data'] as $data) {
+                    if ('polygon' != $data['type']) {
+                        continue;
+                    }
+
+                    $list = $data['list'][0]['bound'];
+                    break;
+                }
+            } else {
+                return null;
+            }
+
+            if (empty($list)) {
+                return null;
+            } else {
+                $list = $this->convertCoords($list, $from = 3, $to = 5);
+                return $list;
+            }
+
+        } catch (Exception $e) {
+            throw $e;
+        }
+    }
     // 获取百度地图中的区域范围
     public function get_baidu_area($word, $city_name = '北京市', $categorys)
     {
@@ -777,6 +811,8 @@ class Geo
                     $list = $data['list'][0]['path'];
                     break;
                 }
+            } else {
+                return null;
             }
 
             $list = $this->convertCoords($list, $from = 3, $to = 5);
@@ -797,6 +833,10 @@ class Geo
             $arr_res = json_decode(Net::curl_get($url), true);
 
             $list = $arr_res['content'];
+
+            if (empty($list)) {
+                return null;
+            }
 
             $geo = explode('|', $list['geo']);
             $geo1 = explode(';', $geo[2]);
