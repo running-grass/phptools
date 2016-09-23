@@ -210,6 +210,7 @@ class Geo
                 foreach ($arr_res['data'] as $data) {
                     if ('marker' == $data['type']) {
                         $temp = $data['list'][0]['shape_region'];
+                        if (empty($temp)) continue;
                         $g = explode(',', $temp);
                         if (!empty($g) && 4 == count($g)) {
                             $res['general'] = [
@@ -226,6 +227,7 @@ class Geo
                         }
                     } elseif ('polygon' == $data['type']) {
                         $temp = $data['list'][0]['bound'];
+                        if (empty($temp)) continue;
                         array_pop($temp);
                         foreach ($temp as $v) {
                             $g = explode(',', $v);
@@ -1069,6 +1071,7 @@ class Geo
                 foreach ($ps as $p) {
                     $str .= "{$p['lng']},{$p['lat']};";
                 }
+                if (empty($str)) return null;
                 $str = trim($str, ';');
                 $url = "http://api.map.baidu.com/geoconv/v1/?coords={$str}&from={$from}&to={$to}&ak=EF06cfb26173665ad80b8edf6a328192";
                 $res = json_decode(file_get_contents($url), true);
