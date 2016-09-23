@@ -1077,7 +1077,7 @@ class Geo
                 $res = json_decode(file_get_contents($url), true);
 
                 if (0 != $res['status']) {
-                    throw new \Exception("百度坐标转换接口请求失败，失败信息（{$res['message']}}）");
+                    throw new \Exception("百度批量坐标转换接口请求失败，失败信息（{$res['message']}}）");
                 }
                 foreach ($res['result'] as $geo) {
                     $list[] = [
