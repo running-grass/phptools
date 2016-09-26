@@ -51,7 +51,7 @@ class Arr
 
             foreach ($arr1 as $k => $v) {
                 // 如果是索引数组的话，是追加合并, 否则是补充合并
-                if ('integer'  == getType($k)) {
+                if (0  === $k) {
                     if (is_array($v)) {
                         return self::array_vm($arr, $arr1);
                     } else {
