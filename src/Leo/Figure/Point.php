@@ -23,7 +23,7 @@ class Point extends Base
     }
 
     // setting and  getting
-    private function setX($x)
+    public function setX($x)
     {
         try {
             $this->x = (float)$x;
@@ -44,7 +44,7 @@ class Point extends Base
     }
 
     // setting and  getting
-    private function setY($y)
+    public function setY($y)
     {
         try {
             $this->y = (float)$y;
