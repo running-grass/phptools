@@ -582,10 +582,14 @@ class Geo
             $html = Net::curl_get($url);
 
             $arr = json_decode($html, true);
-            return [
-                'dis' => $arr['content']['dis'],
-                'time' => $arr['content']['time']
-            ];
+            if (!isset($arr['content']['dis'], $arr['content']['time'])) {
+                return null;
+            } else {
+                return [
+                    'dis' => (int)$arr['content']['dis'],
+                    'time' => (int)$arr['content']['time']
+                ];
+            }
         } catch (\Exception $e) {
             throw $e;
         }
@@ -604,10 +608,14 @@ class Geo
             $html = Net::curl_get($url);
 
             $arr = json_decode($html, true);
-            return [
-                'dis' => $arr['content']['dis'],
-                'time' => $arr['content']['time']
-            ];
+            if (!isset($arr['content']['dis'], $arr['content']['time'])) {
+                return null;
+            } else {
+                return [
+                    'dis' => $arr['content']['dis'],
+                    'time' => $arr['content']['time']
+                ];
+            }
         } catch (\Exception $e) {
             throw $e;
         }
