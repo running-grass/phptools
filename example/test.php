@@ -1,9 +1,11 @@
 <?php
-phpinfo();die;
 require_once __DIR__ . '/../autoload.php';
 
 use \Leo\Arr;
 
+
+var_dump($_SERVER);
+die;
 $arr = [
     'a' =>'sdf','b' =>'sdfas','fa' => [3, [3,2],3]
 ];
