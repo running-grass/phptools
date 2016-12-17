@@ -1,5 +1,3 @@
-[TOC]
-
 # ElasticsearchAPI 概述
 
 ## 简介
