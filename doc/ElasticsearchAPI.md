@@ -1,4 +1,4 @@
-[:TOC]
+[TOC]
 
 # ElasticsearchAPI 概述
 
