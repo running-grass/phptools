@@ -155,7 +155,7 @@ class ElasticsearchAPI
     }
 
     // 执行请求
-    private function call($method, $uri, $data = [])
+    public function call($method, $uri, $data = [])
     {
         $ch = curl_init($this->getHost(). $uri);
         $data_string = json_encode($data);
