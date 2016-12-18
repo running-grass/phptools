@@ -13,7 +13,11 @@ class ElasticsearchAPI
     // 使用地址构造
     public function __construct($host)
     {
-        $this->host = $host;
+        if (is_array($host)) {
+            $this->host = $host[0];
+        } else {
+            $this->host = $host;
+        }
     }
 
     // 尝试是否畅通
@@ -25,6 +29,9 @@ class ElasticsearchAPI
         if (isset($arr['status']) && 200 == $arr['status']) {
             return true;
         } else {
+            if ($arr['error']) {
+                throw new \Exception(json_encode($arr['error']), $arr['status']);
+            }
             return false;
         }
     }
@@ -41,6 +48,9 @@ class ElasticsearchAPI
         if (isset($arr['_id']) && $id == $arr['_id']) {
             return true;
         } else {
+            if ($arr['error']) {
+                throw new \Exception(json_encode($arr['error']), $arr['status']);
+            }
             return false;
         }
     }
@@ -57,6 +67,9 @@ class ElasticsearchAPI
         if (isset($arr['found']) && $arr['found']) {
             return $arr['_source'];
         } else {
+            if ($arr['error']) {
+                throw new \Exception(json_encode($arr['error']), $arr['status']);
+            }
             return false;
         }
     }
@@ -79,6 +92,9 @@ class ElasticsearchAPI
         if (isset($arr['count']) && $arr['count']) {
             return $arr['count'];
         } else {
+            if ($arr['error']) {
+                throw new \Exception(json_encode($arr['error']), $arr['status']);
+            }
             return false;
         }
     }
@@ -95,6 +111,9 @@ class ElasticsearchAPI
         if (isset($arr['_id']) && $id == $arr['_id']) {
             return true;
         } else {
+            if ($arr['error']) {
+                throw new \Exception(json_encode($arr['error']), $arr['status']);
+            }
             return false;
         }
     }
@@ -111,11 +130,12 @@ class ElasticsearchAPI
         $res = $this->call($method, $uri);
         $arr = json_decode($res, true);
 
-        die($res);
-
         if (isset($arr['found']) && $arr['found']) {
             return true;
         } else {
+            if ($arr['error']) {
+                throw new \Exception(json_encode($arr['error']), $arr['status']);
+            }
             return false;
         }
     }
