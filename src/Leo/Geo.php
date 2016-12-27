@@ -98,6 +98,10 @@ class Geo
         '哈尔滨市' => [
             'gaode_id' => 230100,
             'baidu_id' => 48
+        ],
+        '长沙市' => [
+            'gaode_id' => 430121,
+            'baidu_id' => 158
         ]
     ];
 
