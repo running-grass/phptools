@@ -105,8 +105,8 @@ class Geo
         ]
     ];
 
-    private $_gaode_arr_borough = ['120000', '120201', '120203',
-                                   '120300', '120302', '120303', '190403'];
+    // private $_gaode_arr_borough = ['120000', '120201', '120203','120300', '120302', '120303', '190403'];
+    private $_gaode_arr_borough = ['120000','120201', '120203','120300', '120301','120302', '120303', '120304','190403'];
 
     private function _get_gaode_city_id($city_name)
     {
@@ -229,15 +229,14 @@ class Geo
                             ];
                             $res['general'] = $this->convertCoords($res['general'], $from = 3, $to = 5);
                         }
-                    } elseif ('polygon' == $data['type']) {
-                        $temp = $data['list'][0]['bound'];
+                    } elseif ('polyline' == $data['type']) {
+                        $temp = $data['list'][0]['path'];
                         if (empty($temp)) continue;
                         array_pop($temp);
                         foreach ($temp as $v) {
-                            $g = explode(',', $v);
                             $list[] = [
-                                'lng' => $g[0],
-                                'lat' => $g[1]
+                                'lng' => $v['lng'],
+                                'lat' => $v['lat']
                             ];
                         }
 
@@ -983,7 +982,7 @@ class Geo
                 }
             }
 
-            if (!empty($mercator['lat'])) {
+            if (!empty($mercator['lat'])&&in_array('小区',explode(' ',$list[0]['di_tag']))) {
                 $geo = $this->mercatorToLngLat($mercator);
             }
             return $geo;
@@ -1010,8 +1009,7 @@ class Geo
             if (0 != $res['status']) {
                 throw new \Exception('查询百度经纬度接口失败');
             }
-
-            $geo = $res['result']['location'];
+            if('地产小区'==$res['result']['level'])$geo = $res['result']['location'];
 
             return $geo;
         } catch (\Exception $e) {
@@ -1056,7 +1054,8 @@ class Geo
             }
 
             $url = "http://api.map.baidu.com/geoconv/v1/?coords={$geo['lng']},{$geo['lat']}&from={$from}&to={$to}&ak=EF06cfb26173665ad80b8edf6a328192";
-            $res = json_decode(file_get_contents($url), true);
+            $str_res = Net::curl_get($url);
+            $res = json_decode($str_res, true);
 
             if (0 != $res['status']) {
                 throw new \Exception("百度坐标转换接口请求失败，失败信息（{$res['message']}}）");
@@ -1086,8 +1085,8 @@ class Geo
                 if (empty($str)) return null;
                 $str = trim($str, ';');
                 $url = "http://api.map.baidu.com/geoconv/v1/?coords={$str}&from={$from}&to={$to}&ak=EF06cfb26173665ad80b8edf6a328192";
-                $res = json_decode(file_get_contents($url), true);
-
+                $str_res = Net::curl_get($url);
+                $res = json_decode($str_res, true);
                 if (0 != $res['status']) {
                     throw new \Exception("百度批量坐标转换接口请求失败，失败信息（{$res['message']}}）");
                 }
